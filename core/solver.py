@@ -2,6 +2,15 @@ from .board import Board, Cell
 import copy
 
 def collapse(board: Board) -> Board:
+  """
+  Repeatedly collapses the board by rows, columns, and squares until no further changes occur.
+
+  Args:
+    board (Board): The Sudoku board to collapse.
+
+  Returns:
+    Board: The collapsed board.
+  """
   changed = True
   while changed:
     previous_board = copy.deepcopy(board)
@@ -12,6 +21,19 @@ def collapse(board: Board) -> Board:
   return board
 
 def collapse_squares(board: Board, square_size: int) -> Board:
+  """
+  Collapses the board by removing impossible values based on 3x3 square constraints.
+
+  Args:
+    board (Board): The Sudoku board to collapse.
+    square_size (int): Size of the square blocks (typically 3 for 9x9 Sudoku).
+
+  Returns:
+    Board: The board after collapsing squares.
+
+  Raises:
+    ValueError: If square_size does not divide the board dimensions evenly.
+  """
   if len(board.cells) % square_size != 0 or len(board.cells[0]) % square_size != 0:
     raise ValueError(f"[Value Error]: square_size ({square_size}) is not a divisor of one or both of the dimensions of the board ({len(board.cells)} x {len(board.cells[0])})")
 
@@ -28,12 +50,30 @@ def collapse_squares(board: Board, square_size: int) -> Board:
   return board
 
 def collapse_by_column(board: Board) -> Board:
+  """
+  Collapses the board by removing impossible values based on column constraints.
+
+  Args:
+    board (Board): The Sudoku board to collapse.
+
+  Returns:
+    Board: The board after collapsing columns.
+  """
   board.transpose()
   board = collapse_by_row(board)
   board.transpose()
   return board
 
 def collapse_by_row(board: Board) -> Board:
+  """
+  Collapses the board by removing impossible values based on row constraints.
+
+  Args:
+    board (Board): The Sudoku board to collapse.
+
+  Returns:
+    Board: The board after collapsing rows.
+  """
   for x, row in enumerate(board.cells):
     collapsed_values = []
     for cell in row:
@@ -44,6 +84,16 @@ def collapse_by_row(board: Board) -> Board:
   return board
 
 def collapse_list(cell_list: list[Cell], collapsed_values: list[int]) -> list[Cell]:
+  """
+  Removes collapsed values from the possible values of uncollapsed cells in a list.
+
+  Args:
+    cell_list (list[Cell]): List of cells to process.
+    collapsed_values (list[int]): Values to remove from uncollapsed cells.
+
+  Returns:
+    list[Cell]: Updated list of cells after collapsing.
+  """
   new_cell_list: list[Cell] = []
   for cell in cell_list:
     if not cell.collapsed:
@@ -56,6 +106,15 @@ def collapse_list(cell_list: list[Cell], collapsed_values: list[int]) -> list[Ce
   return new_cell_list
 
 def solve(board: Board) -> bool:
+  """
+  Attempts to solve the Sudoku board using constraint propagation and backtracking.
+
+  Args:
+    board (Board): The Sudoku board to solve.
+
+  Returns:
+    bool: True if the board is solved successfully, False if unsolvable.
+  """
   collapse(board)
 
   if board.is_invalid():

@@ -1,4 +1,14 @@
 class Cell:
+  """
+  Represents a single cell in a Sudoku board.
+
+  Attributes:
+    x (int): The row index of the cell.
+    y (int): The column index of the cell.
+    collapsed (bool): True if the cell has a determined value, False otherwise.
+    possible_values (list[int]): List of possible values for the cell. If collapsed, contains only the determined value.
+  """
+
   def __init__(self, x: int, y: int, value: int) -> None:
     self.x: int = x
     self.y: int = y
@@ -11,16 +21,28 @@ class Cell:
       self.collapsed = False
       self.possible_values= list(range(1, 10))
 
-  def __eq__(self, value: object) -> bool:
-    if not isinstance(value, Cell): return False
-    return self.x == value.x and self.y == value.y and self.collapsed == value.collapsed and self.possible_values == value.possible_values
-
   def __ne__(self, value: object) -> bool:
+    """
+    Determines whether two Cell objects are not equal based on position, collapse status, and possible values.
+
+    Args:
+      value (object): The other object to compare with.
+
+    Returns:
+      bool: True if the cells are not equal, False otherwise.
+    """
     if not isinstance(value, Cell): return False
     return self.x != value.x or self.y != value.y or self.collapsed != value.collapsed or self.possible_values != value.possible_values
 
 
 class Board:
+  """
+  Represents a 9x9 Sudoku board composed of Cell objects.
+
+  Attributes:
+    cells (list[list[Cell]]): 2D list representing the board's cells.
+  """
+
   def __init__(self, cells: list[list[int]]) -> None:
     self.cells: list[list[Cell]] = []
     for x in range(len(cells)):
@@ -30,6 +52,12 @@ class Board:
       self.cells.append(row)
 
   def is_solved(self) -> bool:
+    """
+    Checks if the Sudoku board is completely solved.
+
+    Returns:
+      bool: True if all cells are collapsed, False otherwise.
+    """
     for row in self.cells:
       for cell in row:
         if not cell.collapsed:
@@ -37,6 +65,10 @@ class Board:
     return True
 
   def transpose(self) -> None:
+    """
+    Transposes the Sudoku board in-place, switching rows and columns.
+    Updates cell coordinates accordingly.
+    """
     self.cells = [list(row) for row in zip(*self.cells)]
     for x, row in enumerate(self.cells):
         for y, cell in enumerate(row):
@@ -44,6 +76,12 @@ class Board:
             cell.y = y
 
   def find_cells_with_less_entropy(self) -> list[Cell]:
+    """
+    Finds the uncollapsed cells with the fewest possible values (least entropy).
+
+    Returns:
+      list[Cell]: List of cells with the minimum number of possible values.
+    """
     flat_cells = [cell for row in self.cells for cell in row if not cell.collapsed]
     if not flat_cells:
       return []
@@ -55,8 +93,10 @@ class Board:
         min_entropy_cells.append(flat_cells[i])
     return min_entropy_cells
 
-
   def print_board(self) -> None:
+    """
+    Prints a visual representation of the Sudoku board, showing possible values for uncollapsed cells.
+    """
     def render_cell(cell: Cell) -> list[str]:
       grid = [[" " for _ in range(3)] for _ in range(3)]
       if cell.collapsed:
@@ -88,6 +128,15 @@ class Board:
     print(horizontal_block_line)
 
   def __eq__(self, value: object) -> bool:
+    """
+    Checks if two Sudoku boards are equal based on all cell states.
+
+    Args:
+      value (object): The other board to compare with.
+
+    Returns:
+      bool: True if boards are equal, False otherwise.
+    """
     if not isinstance(value, Board): return False
     for x, row in enumerate(self.cells):
       for y, cell in enumerate(row):
@@ -96,6 +145,12 @@ class Board:
     return True
 
   def is_invalid(self) -> bool:
+    """
+    Checks if the current board state violates Sudoku rules.
+
+    Returns:
+      bool: True if there are duplicate values in any row, column, or 3x3 square, False otherwise.
+    """
     size = len(self.cells)
     for row in self.cells:
       values = [cell.possible_values[0] for cell in row if cell.collapsed]

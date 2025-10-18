@@ -15,8 +15,8 @@ Setup Instructions:
        scripts\setup-env.bat
 
 2. Download Sudoku Puzzles:
-   - To download or update the Sudoku puzzles, run the following script:
-       python scripts\get-sudokus.py
+   - To download or update the Sudoku puzzles, run the following script with the number of sudokus of your choice:
+       python scripts\get-sudokus.py <number_of_sudokus>
    - This will populate the ./assets/sudokus.json file with puzzles.
 
 Usage:
