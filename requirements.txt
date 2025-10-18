@@ -7,6 +7,4 @@
 #
 # scripts/install-dependencies.bat
 
-numpy>=2.3.3
-matplotlib>=3.10.7
 requests>=2.32.5

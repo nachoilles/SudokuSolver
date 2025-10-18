@@ -1,13 +1,14 @@
-import json
-from board import Board, Cell
+from .board import Board, Cell
 import copy
 
-
-
 def collapse(board: Board) -> Board:
-  board = collapse_by_row(board)
-  board = collapse_by_column(board)
-  board = collapse_squares(board, 3)
+  changed = True
+  while changed:
+    previous_board = copy.deepcopy(board)
+    board = collapse_by_row(board)
+    board = collapse_by_column(board)
+    board = collapse_squares(board, 3)
+    changed = previous_board != board
   return board
 
 def collapse_squares(board: Board, square_size: int) -> Board:
@@ -54,16 +55,27 @@ def collapse_list(cell_list: list[Cell], collapsed_values: list[int]) -> list[Ce
       new_cell_list.append(cell)
   return new_cell_list
 
-if __name__ == "__main__":
-  with open("../assets/sudokus.json", "r") as f:
-    all_sudokus = json.load(f)
-    board: Board = Board(all_sudokus[0]['value'])
-    board.print_board()
-    for _ in range(2):
-      previous_board: Board = copy.deepcopy(board)
-      collapse(board)
-      board.print_board()
-      if previous_board == board:
-        print("NO IMPROVEMENT")
-      else:
-        print("SUCCESFULLY COLLAPSED")
+def solve(board: Board) -> bool:
+  collapse(board)
+
+  if board.is_invalid():
+    return False
+
+  if board.is_solved():
+    return True
+
+  cells = board.find_cells_with_less_entropy()
+  if not cells:
+    return False
+
+  cell = cells[0]
+
+  for value in cell.possible_values:
+    new_board = copy.deepcopy(board)
+    new_board.cells[cell.x][cell.y].possible_values = [value]
+    new_board.cells[cell.x][cell.y].collapsed = True
+    if solve(new_board):
+      board.cells = new_board.cells
+      return True
+
+  return False
