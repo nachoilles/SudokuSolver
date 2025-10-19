@@ -108,9 +108,11 @@ class Board:
           grid[i][j] = str(val)
       return ["".join(row) for row in grid]
 
+    buffer: str = ""
+
     horizontal_block_line = "=" * ((3 + 1) * 9 + 4)
 
-    print(horizontal_block_line)
+    buffer += f"{horizontal_block_line}\n"
     for row_idx, row in enumerate(self.cells):
       cell_lines = ["" for _ in range(3)]
       for col_idx, cell in enumerate(row):
@@ -122,10 +124,11 @@ class Board:
           else:
             cell_lines[i] += "|"
       for line in cell_lines:
-        print("|" + line)
+        buffer += "|" + line + "\n"
       if (row_idx + 1) % 3 == 0 and row_idx != 8:
-        print(horizontal_block_line)
-    print(horizontal_block_line)
+        buffer += f"{horizontal_block_line}\n"
+    buffer += f"{horizontal_block_line}\n"
+    print(buffer)
 
   def __eq__(self, value: object) -> bool:
     """
