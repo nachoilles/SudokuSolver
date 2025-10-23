@@ -2,7 +2,7 @@ import json
 import time
 from multiprocessing import Pool
 from core.board import Board
-from core.solver import solve, collapse
+from core.solver import solve
 
 def solve_one(args):
   i, sudoku = args
