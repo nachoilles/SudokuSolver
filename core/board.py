@@ -32,7 +32,7 @@ class Cell:
       bool: True if the cells are not equal, False otherwise.
     """
     if not isinstance(value, Cell): return False
-    return self.x != value.x or self.y != value.y or self.collapsed != value.collapsed or self.possible_values != value.possible_values
+    return (self.x, self.y, self.collapsed, self.possible_values) != (value.x, value.y, value.collapsed, value.possible_values)
 
 
 class Board:
